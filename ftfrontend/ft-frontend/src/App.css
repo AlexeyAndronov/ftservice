@@ -1,75 +1,172 @@
-.App {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+/* Глобальные стили */
+* {
+  box-sizing: border-box;
 }
 
+body {
+  margin: 0;
+  background: #f0f2f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+.App {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+h1 {
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 28px;
+  letter-spacing: -0.5px;
+}
+
+/* ----- Форма добавления ----- */
 .add-form {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 32px;
   flex-wrap: wrap;
+  background: white;
+  padding: 18px 20px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  align-items: center;
+}
+
+.add-form .input-code {
+  flex: 0 0 30%;          /* 30% ширины */
+  min-width: 120px;
+}
+
+.add-form .input-desc {
+  flex: 1;                /* занимает всё оставшееся место */
+  min-width: 180px;
 }
 
 .add-form input {
-  flex: 1;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 10px 14px;
+  border: 1px solid #d0d7de;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: border 0.2s, box-shadow 0.2s;
+  background: #f8fafc;
+}
+
+.add-form input:focus {
+  outline: none;
+  border-color: #4f8cf7;
+  box-shadow: 0 0 0 3px rgba(79, 140, 247, 0.15);
+  background: white;
 }
 
 .add-form button {
-  padding: 8px 16px;
-  background: #28a745;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #28a745, #20c997);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.25);
+  white-space: nowrap;
 }
 
+.add-form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(40, 167, 69, 0.35);
+}
+
+.add-form button:active {
+  transform: translateY(0);
+}
+
+/* ----- Список FT ----- */
 .ft-list {
-  margin: 0 auto;
-  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.empty-message {
+  text-align: center;
+  color: #6b7280;
+  font-size: 1.1rem;
+  padding: 40px 0;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .ft-item {
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 12px 16px;
-  margin-bottom: 12px;
-  background: #f9f9f9;
+  background: white;
+  border-radius: 16px;
+  padding: 18px 22px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.25s, transform 0.15s;
 }
 
-/* Название и описание в одной строке */
+.ft-item:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.ft-view h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #1e293b;
+}
+
 .ft-header {
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
-}
-
-.ft-header h3 {
-  margin: 0;
+  margin-bottom: 8px;
 }
 
 .ft-desc-inline {
-  color: #555;
+  color: #475569;
   font-size: 0.95rem;
   word-break: break-word;
+  background: #f1f5f9;
+  padding: 2px 12px;
+  border-radius: 20px;
 }
 
 .ft-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .ft-state {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 14px;
+}
+
+.state-badge {
+  font-size: 0.9rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.state-badge.enabled {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.state-badge.disabled {
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 .ft-actions {
@@ -82,65 +179,164 @@
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: background 0.2s;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background 0.2s, transform 0.1s;
 }
 
 .ft-actions .edit-btn:hover {
-  background: #ffc107;
+  background: #fef3c7;
+  transform: scale(1.1);
 }
 
 .ft-actions .delete-btn:hover {
-  background: #dc3545;
-  color: white;
+  background: #fee2e2;
+  transform: scale(1.1);
 }
 
+/* ----- Форма редактирования ----- */
 .edit-form {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+}
+
+.edit-form .input-code {
+  flex: 0 0 30%;
+  min-width: 120px;
+}
+
+.edit-form .input-desc {
+  flex: 1;
+  min-width: 180px;
 }
 
 .edit-form input[type="text"] {
-  padding: 6px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 10px 14px;
+  border: 1px solid #d0d7de;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: border 0.2s, box-shadow 0.2s;
+  background: #f8fafc;
 }
 
-.edit-form label {
+.edit-form input[type="text"]:focus {
+  outline: none;
+  border-color: #4f8cf7;
+  box-shadow: 0 0 0 3px rgba(79, 140, 247, 0.15);
+  background: white;
+}
+
+.edit-checkboxes {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin: 4px 0;
+}
+
+.edit-checkboxes label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #1e293b;
+  cursor: pointer;
+}
+
+.edit-checkboxes input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #4f8cf7;
 }
 
 .edit-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
+  margin-top: 4px;
 }
 
 .edit-actions button {
-  padding: 4px 12px;
+  padding: 8px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
 }
 
 .edit-actions button[type="submit"] {
-  background: #007bff;
+  background: linear-gradient(135deg, #4f8cf7, #3b6edb);
   color: white;
+  box-shadow: 0 2px 8px rgba(79, 140, 247, 0.25);
+}
+
+.edit-actions button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(79, 140, 247, 0.35);
 }
 
 .edit-actions button[type="button"] {
-  background: #6c757d;
-  color: white;
+  background: #e2e8f0;
+  color: #334155;
 }
 
+.edit-actions button[type="button"]:hover {
+  background: #cbd5e1;
+  transform: translateY(-2px);
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  background: #ff8c00;
+  color: white;
+  padding: 16px 24px;
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(255, 140, 0, 0.35);
+  font-weight: 500;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 420px;
+  animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  backdrop-filter: blur(2px);
+}
+
+.toast-close {
+  font-weight: bold;
+  font-size: 1.3rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  margin-left: auto;
+}
+
+.toast-close:hover {
+  opacity: 1;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(80px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ===== Toggle Switch ===== */
 .toggle-switch {
   position: relative;
   display: inline-block;
-  width: 40px;
-  height: 22px;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
 .toggle-switch input {
@@ -156,83 +352,81 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
+  background-color: #cbd5e1;
+  transition: 0.3s;
   border-radius: 34px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 16px;
-  width: 16px;
+  height: 18px;
+  width: 18px;
   left: 3px;
   bottom: 3px;
   background-color: white;
-  transition: 0.4s;
+  transition: 0.3s;
   border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 .toggle-switch input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #4f8cf7;
 }
 
 .toggle-switch input:checked + .slider:before {
-  transform: translateX(18px);
+  transform: translateX(20px);
 }
 
-/* ===== Toast-уведомление ===== */
-.toast {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #ff8c00; /* оранжевый */
-  color: #fff;
-  padding: 16px 24px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  font-size: 1rem;
-  font-weight: 500;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  max-width: 400px;
-  animation: slideIn 0.3s ease-out;
-  cursor: pointer;
-}
-
-.toast-close {
-  font-weight: bold;
-  font-size: 1.2rem;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-}
-
-.toast-close:hover {
-  opacity: 1;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
+/* ===== Адаптивность ===== */
+@media (max-width: 640px) {
+  .App {
+    padding: 16px;
   }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
 
-/* Адаптивность для мобильных */
-@media (max-width: 600px) {
+  .add-form {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .add-form .input-code,
+  .add-form .input-desc {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .add-form button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .edit-form .input-code,
+  .edit-form .input-desc {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .ft-item {
+    padding: 14px 16px;
+  }
+
+  .ft-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ft-actions {
+    margin-left: auto;
+  }
+
   .toast {
-    top: 10px;
-    right: 10px;
-    left: 10px;
+    top: 12px;
+    right: 12px;
+    left: 12px;
     max-width: none;
-    font-size: 0.9rem;
-    padding: 12px 16px;
+    font-size: 0.95rem;
+    padding: 14px 18px;
   }
 }

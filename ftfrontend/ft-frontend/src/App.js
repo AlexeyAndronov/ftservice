@@ -13,12 +13,10 @@ function App() {
   const [editCompleted, setEditCompleted] = useState(false);
   const [editEnabled, setEditEnabled] = useState(true);
 
-  // Состояние для тоста
   const [toast, setToast] = useState({ visible: false, message: '' });
   const toastTimerRef = useRef(null);
 
-  // Показ тоста
-  const showToast = useCallback((message) => {
+  const showToast = (message) => {
     if (toastTimerRef.current) {
       clearTimeout(toastTimerRef.current);
     }
@@ -26,18 +24,16 @@ function App() {
     toastTimerRef.current = setTimeout(() => {
       setToast({ visible: false, message: '' });
     }, 10000);
-  }, []);
+  };
 
-  // Скрыть тост вручную
-  const hideToast = useCallback(() => {
+  const hideToast = () => {
     if (toastTimerRef.current) {
       clearTimeout(toastTimerRef.current);
       toastTimerRef.current = null;
     }
     setToast({ visible: false, message: '' });
-  }, []);
+  };
 
-  // Загрузка списка
   const fetchFTList = useCallback(async () => {
     try {
       const res = await fetch(`${API_BASE}/ftlist`);
@@ -47,7 +43,7 @@ function App() {
       console.error('Ошибка загрузки списка:', err);
       showToast('Не удалось загрузить список FT');
     }
-  }, [showToast]);
+  }, []);
 
   useEffect(() => {
     fetchFTList();
@@ -58,7 +54,6 @@ function App() {
     };
   }, [fetchFTList]);
 
-  // Добавление
   const addFT = async (e) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
@@ -79,7 +74,8 @@ function App() {
         fetchFTList();
       } else {
         const errorData = await res.json();
-        showToast(errorData.detail || `Ошибка ${res.status}`);
+        const errorMsg = errorData.detail || `Ошибка ${res.status}`;
+        showToast(errorMsg);
       }
     } catch (err) {
       console.error('Ошибка добавления:', err);
@@ -87,9 +83,8 @@ function App() {
     }
   };
 
-  // Удаление
   const deleteFT = async (id) => {
-    if (!window.confirm('Удалить задачу?')) return;
+    if (!window.confirm('Удалить FT?')) return;
     try {
       const res = await fetch(`${API_BASE}/deleteft/${id}`, { method: 'DELETE' });
       if (res.ok) {
@@ -104,7 +99,6 @@ function App() {
     }
   };
 
-  // Переключение состояния
   const toggleFT = async (ft) => {
     const newEnabled = !ft.enabled;
     try {
@@ -125,7 +119,6 @@ function App() {
     }
   };
 
-  // Начало редактирования
   const startEdit = (ft) => {
     setEditingId(ft.id);
     setEditTitle(ft.title);
@@ -134,7 +127,6 @@ function App() {
     setEditEnabled(ft.enabled);
   };
 
-  // Сохранение редактирования
   const saveEdit = async (e) => {
     e.preventDefault();
     if (!editTitle.trim()) return;
@@ -181,6 +173,7 @@ function App() {
         <input
           type="text"
           placeholder="Код FT"
+          className="input-code"
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           required
@@ -188,6 +181,7 @@ function App() {
         <input
           type="text"
           placeholder="Описание (необязательно)"
+          className="input-desc"
           value={newDesc}
           onChange={(e) => setNewDesc(e.target.value)}
         />
@@ -196,7 +190,7 @@ function App() {
 
       <div className="ft-list">
         {fts.length === 0 ? (
-          <p>Не ни одного FT. Добавьте первый</p>
+          <p className="empty-message">Нет задач. Добавьте первую!</p>
         ) : (
           fts.map((ft) => (
             <div key={ft.id} className="ft-item">
@@ -205,6 +199,7 @@ function App() {
                   <input
                     type="text"
                     placeholder="Код FT"
+                    className="input-code"
                     value={editTitle}
                     onChange={(e) => setEditTitle(e.target.value)}
                     required
@@ -212,25 +207,28 @@ function App() {
                   <input
                     type="text"
                     value={editDesc}
+                    className="input-desc"
                     onChange={(e) => setEditDesc(e.target.value)}
                     placeholder="Описание"
                   />
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={editCompleted}
-                      onChange={(e) => setEditCompleted(e.target.checked)}
-                    />
-                    Выполнено
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={editEnabled}
-                      onChange={(e) => setEditEnabled(e.target.checked)}
-                    />
-                    Включено
-                  </label>
+                  <div className="edit-checkboxes">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={editCompleted}
+                        onChange={(e) => setEditCompleted(e.target.checked)}
+                      />
+                      Выполнено
+                    </label>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={editEnabled}
+                        onChange={(e) => setEditEnabled(e.target.checked)}
+                      />
+                      Включено
+                    </label>
+                  </div>
                   <div className="edit-actions">
                     <button type="submit">💾 Сохранить</button>
                     <button type="button" onClick={cancelEdit}>❌ Отмена</button>
@@ -242,9 +240,12 @@ function App() {
                     <h3>{ft.title}</h3>
                     {ft.description && <span className="ft-desc-inline">{ft.description}</span>}
                   </div>
+
                   <div className="ft-row">
                     <div className="ft-state">
-                      <span>{ft.enabled ? '🟢 Включен' : '🔴 Выключен'}</span>
+                      <span className={`state-badge ${ft.enabled ? 'enabled' : 'disabled'}`}>
+                        {ft.enabled ? '🟢 Включен' : '🔴 Выключен'}
+                      </span>
                       <label className="toggle-switch">
                         <input
                           type="checkbox"
