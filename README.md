@@ -1,4 +1,4 @@
-# FTServices
+# Feature-Toggle Service
 
 Простой шаблон для feature-toggle сервиса.
 
