@@ -1,0 +1,24 @@
+[project]
+name = "ftservice"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "e-not",email = "av.4ndronov@yandex.ru"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "peewee (>=4.2.6,<5.0.0)",
+    "psycopg (>=3.3.4,<4.0.0)",
+    "peewee (>=4.2.6,<5.0.0)",
+    "psycopg-binary (>=3.3.4,<4.0.0)",
+    "fastapi (>=0.140.13,<0.141.0)",
+    "uvicorn (>=0.51.0,<0.52.0)"
+]
+
+[tool.poetry]
+packages = [{include = "ftservice", from = "src"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
