@@ -127,7 +127,7 @@ function App() {
 
       <div className="ft-list">
         {fts.length === 0 ? (
-          <p>Нет задач. Добавьте первую!</p>
+          <p>Нет ни одного Feature Toggle. Добавьте первый!</p>
         ) : (
           fts.map((ft) => (
             <div key={ft.id} className="ft-item">

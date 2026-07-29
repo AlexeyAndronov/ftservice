@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS fts (
 );
 
 -- Индекс для ускорения поиска по title (уже обеспечивается UNIQUE)
+
 CREATE INDEX IF NOT EXISTS idx_fts_title ON fts (title);
 
 Для настройки доступа к БД создайте .env файл
@@ -32,7 +33,6 @@ DB_USER=postgres
 DB_PASSWORD=your_password
 DB_HOST=localhost
 DB_PORT=5432
-
 
 ## Запуск
 
