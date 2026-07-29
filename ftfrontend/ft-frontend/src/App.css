@@ -37,8 +37,8 @@ h1 {
 }
 
 .add-form .input-code {
-  flex: 0 0 30%;          /* 30% ширины */
-  min-width: 120px;
+  flex: 0 0 20%;          /* 30% ширины */
+  min-width: 80px;
 }
 
 .add-form .input-desc {
