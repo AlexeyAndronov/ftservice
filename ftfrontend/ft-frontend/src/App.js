@@ -196,7 +196,7 @@ function App() {
 
       <div className="ft-list">
         {fts.length === 0 ? (
-          <p>Нет задач. Добавьте первую!</p>
+          <p>Не ни одного FT. Добавьте первый</p>
         ) : (
           fts.map((ft) => (
             <div key={ft.id} className="ft-item">
@@ -244,7 +244,7 @@ function App() {
                   </div>
                   <div className="ft-row">
                     <div className="ft-state">
-                      <span>{ft.enabled ? '🟢 Включена' : '🔴 Выключена'}</span>
+                      <span>{ft.enabled ? '🟢 Включен' : '🔴 Выключен'}</span>
                       <label className="toggle-switch">
                         <input
                           type="checkbox"
