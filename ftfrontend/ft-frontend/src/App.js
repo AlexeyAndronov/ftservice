@@ -23,7 +23,7 @@ function App() {
     setToast({ visible: true, message });
     toastTimerRef.current = setTimeout(() => {
       setToast({ visible: false, message: '' });
-    }, 10000);
+    }, 2000);
   };
 
   const hideToast = () => {
@@ -190,7 +190,7 @@ function App() {
 
       <div className="ft-list">
         {fts.length === 0 ? (
-          <p className="empty-message">Нет задач. Добавьте первую!</p>
+          <p className="empty-message">Нет ни одного нового FT. Добавьте первый!</p>
         ) : (
           fts.map((ft) => (
             <div key={ft.id} className="ft-item">
