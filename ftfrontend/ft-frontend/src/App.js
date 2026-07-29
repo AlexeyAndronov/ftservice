@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './App.css';
 
 const API_BASE = 'http://localhost:8000';
@@ -13,20 +13,52 @@ function App() {
   const [editCompleted, setEditCompleted] = useState(false);
   const [editEnabled, setEditEnabled] = useState(true);
 
-  useEffect(() => {
-    fetchFTList();
+  // Состояние для тоста
+  const [toast, setToast] = useState({ visible: false, message: '' });
+  const toastTimerRef = useRef(null);
+
+  // Показ тоста
+  const showToast = useCallback((message) => {
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current);
+    }
+    setToast({ visible: true, message });
+    toastTimerRef.current = setTimeout(() => {
+      setToast({ visible: false, message: '' });
+    }, 10000);
   }, []);
 
-  const fetchFTList = async () => {
+  // Скрыть тост вручную
+  const hideToast = useCallback(() => {
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current);
+      toastTimerRef.current = null;
+    }
+    setToast({ visible: false, message: '' });
+  }, []);
+
+  // Загрузка списка
+  const fetchFTList = useCallback(async () => {
     try {
       const res = await fetch(`${API_BASE}/ftlist`);
       const data = await res.json();
       setFts(data);
     } catch (err) {
       console.error('Ошибка загрузки списка:', err);
+      showToast('Не удалось загрузить список FT');
     }
-  };
+  }, [showToast]);
 
+  useEffect(() => {
+    fetchFTList();
+    return () => {
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current);
+      }
+    };
+  }, [fetchFTList]);
+
+  // Добавление
   const addFT = async (e) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
@@ -34,28 +66,45 @@ function App() {
       const res = await fetch(`${API_BASE}/addft`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: newTitle, description: newDesc, completed: false, enabled: true }),
+        body: JSON.stringify({
+          title: newTitle,
+          description: newDesc,
+          completed: false,
+          enabled: false,
+        }),
       });
       if (res.ok) {
         setNewTitle('');
         setNewDesc('');
         fetchFTList();
+      } else {
+        const errorData = await res.json();
+        showToast(errorData.detail || `Ошибка ${res.status}`);
       }
     } catch (err) {
       console.error('Ошибка добавления:', err);
+      showToast('Ошибка сети при добавлении FT');
     }
   };
 
+  // Удаление
   const deleteFT = async (id) => {
     if (!window.confirm('Удалить задачу?')) return;
     try {
       const res = await fetch(`${API_BASE}/deleteft/${id}`, { method: 'DELETE' });
-      if (res.ok) fetchFTList();
+      if (res.ok) {
+        fetchFTList();
+      } else {
+        const errorData = await res.json();
+        showToast(errorData.detail || 'Ошибка удаления');
+      }
     } catch (err) {
       console.error('Ошибка удаления:', err);
+      showToast('Ошибка сети при удалении');
     }
   };
 
+  // Переключение состояния
   const toggleFT = async (ft) => {
     const newEnabled = !ft.enabled;
     try {
@@ -67,13 +116,16 @@ function App() {
       if (res.ok) {
         fetchFTList();
       } else {
-        console.error('Ошибка при переключении');
+        const errorData = await res.json();
+        showToast(errorData.detail || 'Ошибка переключения состояния');
       }
     } catch (err) {
       console.error('Ошибка сети:', err);
+      showToast('Ошибка сети при переключении');
     }
   };
 
+  // Начало редактирования
   const startEdit = (ft) => {
     setEditingId(ft.id);
     setEditTitle(ft.title);
@@ -82,6 +134,7 @@ function App() {
     setEditEnabled(ft.enabled);
   };
 
+  // Сохранение редактирования
   const saveEdit = async (e) => {
     e.preventDefault();
     if (!editTitle.trim()) return;
@@ -89,14 +142,23 @@ function App() {
       const res = await fetch(`${API_BASE}/editft/${editingId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: editTitle, description: editDesc, completed: editCompleted, enabled: editEnabled }),
+        body: JSON.stringify({
+          title: editTitle,
+          description: editDesc,
+          completed: editCompleted,
+          enabled: editEnabled,
+        }),
       });
       if (res.ok) {
         setEditingId(null);
         fetchFTList();
+      } else {
+        const errorData = await res.json();
+        showToast(errorData.detail || 'Ошибка редактирования');
       }
     } catch (err) {
       console.error('Ошибка редактирования:', err);
+      showToast('Ошибка сети при редактировании');
     }
   };
 
@@ -108,10 +170,17 @@ function App() {
     <div className="App">
       <h1>📋 FT Manager</h1>
 
+      {toast.visible && (
+        <div className="toast" onClick={hideToast}>
+          {toast.message}
+          <span className="toast-close">✕</span>
+        </div>
+      )}
+
       <form onSubmit={addFT} className="add-form">
         <input
           type="text"
-          placeholder="Код FT"                     // <-- изменено
+          placeholder="Код FT"
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           required
@@ -127,7 +196,7 @@ function App() {
 
       <div className="ft-list">
         {fts.length === 0 ? (
-          <p>Нет ни одного Feature Toggle. Добавьте первый!</p>
+          <p>Нет задач. Добавьте первую!</p>
         ) : (
           fts.map((ft) => (
             <div key={ft.id} className="ft-item">
@@ -135,7 +204,7 @@ function App() {
                 <form onSubmit={saveEdit} className="edit-form">
                   <input
                     type="text"
-                    placeholder="Код FT"          // <-- изменено
+                    placeholder="Код FT"
                     value={editTitle}
                     onChange={(e) => setEditTitle(e.target.value)}
                     required
@@ -169,12 +238,10 @@ function App() {
                 </form>
               ) : (
                 <div className="ft-view">
-                  {/* Название и описание в одной строке */}
                   <div className="ft-header">
                     <h3>{ft.title}</h3>
                     {ft.description && <span className="ft-desc-inline">{ft.description}</span>}
                   </div>
-
                   <div className="ft-row">
                     <div className="ft-state">
                       <span>{ft.enabled ? '🟢 Включена' : '🔴 Выключена'}</span>

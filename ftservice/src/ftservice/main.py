@@ -7,7 +7,7 @@ import uuid
 from peewee import PostgresqlDatabase, Model, CharField, TextField, BooleanField, IntegrityError
 from config import config
 
-# ----- Подключение к БД через конфиг -----
+# ----- Подключение к БД -----
 database = PostgresqlDatabase(
     config.DB_NAME,
     user=config.DB_USER,
@@ -22,16 +22,14 @@ class FTModel(Model):
     title = CharField(max_length=255, unique=True, index=True)
     description = TextField(null=True)
     completed = BooleanField(default=False)
-    enabled = BooleanField(default=True)
+    enabled = BooleanField(default=False)  # <-- ИЗМЕНЕНО: по умолчанию выключен
 
     class Meta:
         database = database
         table_name = 'fts'
 
-# Подключаемся и создаём таблицу, если её нет (на всякий случай)
-# Но основное создание делаем через SQL-скрипт.
 database.connect()
-database.create_tables([FTModel])  # безопасно, если таблица уже существует
+database.create_tables([FTModel])
 
 # ----- FastAPI приложение -----
 app = FastAPI(title="FT Manager API")
@@ -44,19 +42,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ----- Pydantic схемы (без изменений) -----
+# ----- Pydantic схемы -----
 class FT(BaseModel):
     id: str
     title: str
     description: Optional[str] = ""
     completed: bool = False
-    enabled: bool = True
+    enabled: bool = False  # <-- ИЗМЕНЕНО: по умолчанию выключен (для ответа)
 
 class FTCreate(BaseModel):
     title: str
     description: Optional[str] = ""
     completed: bool = False
-    enabled: bool = True
+    enabled: bool = False  # <-- ИЗМЕНЕНО: по умолчанию выключен
 
 class FTUpdate(BaseModel):
     title: Optional[str] = None
@@ -67,7 +65,6 @@ class FTUpdate(BaseModel):
 class FTState(BaseModel):
     state: bool
 
-# ----- Конвертер -----
 def model_to_pydantic(ft: FTModel) -> FT:
     return FT(
         id=ft.id,
@@ -91,7 +88,7 @@ async def add_new_ft(ft: FTCreate):
             title=ft.title,
             description=ft.description,
             completed=ft.completed,
-            enabled=ft.enabled
+            enabled=ft.enabled  # теперь будет False, если не передано
         )
         return model_to_pydantic(new_ft)
     except IntegrityError:
